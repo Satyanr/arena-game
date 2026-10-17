@@ -17,8 +17,26 @@
         <span id="round">Battle #1</span>
       </div>
 
-      <canvas id="arena" class="arena"
-              width="720" height="600"></canvas>
+      <div class="arena-frame">
+        <div class="arena-frame-header">
+          <span>⚔ BATTLE ARENA</span>
+          <span class="arena-live">● LIVE SIMULATION</span>
+        </div>
+
+        <div class="arena-inner">
+          <canvas
+            id="arena"
+            class="arena"
+            width="520"
+            height="420">
+          </canvas>
+        </div>
+
+        <div class="arena-frame-footer">
+          <span>RANDOM BOUNCE PHYSICS</span>
+          <span>1 VS 1</span>
+        </div>
+      </div>
 
       <div class="status" id="status">Ready to fight</div>
 

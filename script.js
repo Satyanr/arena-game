@@ -139,8 +139,11 @@ function createFighter(c, i) {
 
   return {
     ...structuredClone(c),
-    x: i ? rand(W - 280, W - 110) : rand(110, 280),
-    y: rand(90, H - 90),
+    // Spawn pada sisi kiri atau kanan arena
+    x: i
+      ? rand(W * 0.65, W * 0.80)
+      : rand(W * 0.20, W * 0.35),
+    y: rand(H * 0.25, H * 0.75),
     vx: Math.cos(direction) * speed,
     vy: Math.sin(direction) * speed,
     r: 21,
