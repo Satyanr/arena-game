@@ -3,69 +3,219 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orb Arena — Custom Auto Battle</title>
+  <title>Orb Arena — Character Battle</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="layout">
-    <section class="panel">
-      <div class="top">
-        <div>
-          <h1>⚔ Orb Arena</h1>
-          <p>Random Bounce • Custom Characters & Abilities</p>
-        </div>
-        <span id="round">Battle #1</span>
+
+<main class="layout">
+
+  <section class="panel battle-panel">
+
+    <header class="top">
+      <div>
+        <h1>⚔ Orb Arena</h1>
+        <p>Random Bounce Auto Battle</p>
+      </div>
+      <span id="round">Battle #1</span>
+    </header>
+
+    <!-- MEDIUM FRAMED ARENA -->
+    <div class="arena-frame">
+      <div class="arena-frame-header">
+        <span>⚔ BATTLE ARENA</span>
+        <span class="arena-live">● LIVE SIMULATION</span>
       </div>
 
-      <div class="arena-frame">
-        <div class="arena-frame-header">
-          <span>⚔ BATTLE ARENA</span>
-          <span class="arena-live">● LIVE SIMULATION</span>
-        </div>
-
-        <div class="arena-inner">
-          <canvas
-            id="arena"
-            class="arena"
-            width="520"
-            height="420">
-          </canvas>
-        </div>
-
-        <div class="arena-frame-footer">
-          <span>RANDOM BOUNCE PHYSICS</span>
-          <span>1 VS 1</span>
-        </div>
+      <div class="arena-inner">
+        <canvas id="arena" class="arena"
+                width="520" height="420"></canvas>
       </div>
 
-      <div class="status" id="status">Ready to fight</div>
+      <div class="arena-frame-footer">
+        <span>RANDOM BOUNCE PHYSICS</span>
+        <span>1 VS 1 · <span id="battleClock">120 s</span></span>
+      </div>
+    </div>
 
-      <div class="buttons">
-        <button class="primary" id="start">▶ Start / Resume</button>
-        <button id="pause">⏸ Pause</button>
-        <button id="reset">↻ Restart</button>
-        <button id="random">🎲 Randomize</button>
-        <button id="save">💾 Save</button>
-        <button id="export">⬇ Export JSON</button>
-        <label class="filelabel">
-          ⬆ Import JSON
-          <input type="file" id="import" accept=".json,application/json">
+    <div class="status" id="status">Ready to fight</div>
+
+    <div class="buttons">
+      <button class="primary" id="start">▶ Start / Resume</button>
+      <button id="pause">⏸ Pause</button>
+      <button id="reset">↻ Restart</button>
+      <button id="random">🎲 Random Fighters</button>
+    </div>
+
+    <p class="note">
+      Setiap pertandingan menggunakan arah dan posisi awal acak.
+      Karakter bergerak bebas tanpa mengejar lawan. Batas ronde 120 detik;
+      saat waktu habis, persentase HP tersisa menentukan pemenang.
+      Burn/poison maksimal 3 tumpukan per jenis. Stun maksimal 0,6 detik
+      dengan jeda perlindungan 0,4 detik.
+    </p>
+  </section>
+
+  <!-- CHARACTER ROSTER -->
+  <aside class="panel roster-panel">
+    <h2>Character Roster</h2>
+    <p>Pilih karakter. Equipment dan ability mengikuti otomatis.</p>
+
+    <div class="fighter-card">
+      <h3>🟠 Fighter A</h3>
+      <select id="fighterA"></select>
+      <div class="fighter-info" id="fighterAInfo"></div>
+    </div>
+
+    <div class="versus">VS</div>
+
+    <div class="fighter-card">
+      <h3>🟢 Fighter B</h3>
+      <select id="fighterB"></select>
+      <div class="fighter-info" id="fighterBInfo"></div>
+    </div>
+
+    <button class="primary full" id="openCreator">
+      ✦ Character Creator
+    </button>
+
+    <div class="buttons">
+      <button id="export">⬇ Export Roster</button>
+      <label class="filelabel">
+        ⬆ Import Roster
+        <input id="import" type="file"
+               accept=".json,application/json">
+      </label>
+    </div>
+
+    <p class="note">
+      Character Creator digunakan untuk membuat atau mengedit
+      karakter custom. Karakter bawaan dapat diduplikasi.
+    </p>
+  </aside>
+</main>
+
+<!-- CHARACTER CREATOR WINDOW -->
+<dialog id="creator" class="creator-dialog">
+  <div class="creator-header">
+    <div>
+      <h2>✦ Character Creator</h2>
+      <p>Buat karakter dengan equipment dan ability sendiri.</p>
+    </div>
+    <button type="button" id="creatorClose">✕</button>
+  </div>
+
+  <div class="creator-toolbar">
+    <label>
+      Character Library
+      <select id="manageCharacter"></select>
+    </label>
+
+    <div class="buttons">
+      <button type="button" id="newCharacter">＋ New</button>
+      <button type="button" id="cloneCharacter">⧉ Duplicate</button>
+      <button type="button" id="deleteCharacter">Delete</button>
+    </div>
+  </div>
+
+  <p class="creator-hint" id="creatorHint"></p>
+
+  <form id="characterForm">
+    <fieldset id="creatorFields">
+      <div class="creator-grid">
+        <label>
+          Character Name
+          <input name="name" type="text" maxlength="24" required>
+        </label>
+
+        <label>
+          Character Color
+          <input name="color" type="color" required>
+        </label>
+
+        <label>
+          Equipment / Weapon
+          <select name="weapon">
+            <option value="club">Club</option>
+            <option value="dagger">Dagger</option>
+            <option value="sword">Sword</option>
+            <option value="hammer">Hammer</option>
+            <option value="spear">Spear</option>
+          </select>
+        </label>
+
+        <label>
+          Special Ability
+          <select name="ability">
+            <option value="none">None</option>
+            <option value="burn">Burn</option>
+            <option value="poison">Poison</option>
+            <option value="heal">Heal</option>
+            <option value="shield">Shield</option>
+            <option value="lifesteal">Lifesteal</option>
+            <option value="slow">Slow</option>
+          </select>
+        </label>
+
+        <label>
+          Max HP
+          <input name="hp" type="number"
+                 min="10" max="1000" step="1" required>
+        </label>
+
+        <label>
+          Movement Speed
+          <input name="speed" type="number"
+                 min="30" max="400" step="1" required>
+        </label>
+
+        <label>
+          Damage
+          <input name="damage" type="number"
+                 min="0" max="100" step="0.1" required>
+        </label>
+
+        <label>
+          Attack Speed
+          <input name="attackSpeed" type="number"
+                 min="0.2" max="20" step="0.1" required>
+        </label>
+
+        <label>
+          Weapon Reach
+          <input name="range" type="number"
+                 min="20" max="160" step="1" required>
+        </label>
+
+        <label>
+          Stun Duration (sec)
+          <input name="stun" type="number"
+                 min="0" max="3" step="0.01" required>
+        </label>
+
+        <label>
+          Knockback
+          <input name="knockback" type="number"
+                 min="0" max="600" step="1" required>
+        </label>
+
+        <label>
+          Ability Chance (%)
+          <input name="chance" type="number"
+                 min="0" max="100" step="1" required>
         </label>
       </div>
+    </fieldset>
 
-      <p class="note">
-        Perubahan statistik diterapkan saat Restart.
-        Setiap pertandingan memiliki posisi, arah, dan
-        pola pantulan berbeda.
-      </p>
-    </section>
+    <div class="creator-actions">
+      <button type="button" id="creatorCancel">Close</button>
+      <button type="submit" class="primary" id="saveCharacter">
+        Save Character
+      </button>
+    </div>
+  </form>
+</dialog>
 
-    <section class="panel">
-      <h2>Character & Ability Editor</h2>
-      <div class="editors" id="editors"></div>
-    </section>
-  </main>
-
-  <script src="script.js" defer></script>
+<script src="script.js" defer></script>
 </body>
 </html>
